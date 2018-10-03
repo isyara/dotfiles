@@ -1,0 +1,175 @@
+
+[credential]
+    helper = osxkeychain
+
+[user]
+    name = Your name
+    email = mail@example.dl
+
+[core]
+    excludesfile = ~/.gitignore
+    attributesfile = ~/.gitattributes
+    filemode = false
+
+[status]
+    submoduleSummary = true
+
+[commit]
+    cleanup = strip
+    template = ~/.gitmessage
+    
+[fetch]
+    prune = true
+
+[push]
+    default = current
+
+[pull]
+    rebase = preserve
+
+[diff]
+    compactionHeuristic = true
+    mnemonicPrefix = true
+    submodule = log
+
+[merge]
+    stat = true
+    log = true
+    conflictStyle = diff3
+
+[apply]
+    whitespace = fix
+
+[rebase]
+    autosquash = true
+
+[rerere]
+    enabled = true
+
+[pager]
+    # see before https://github.com/so-fancy/diff-so-fancy
+    diff = diff-so-fancy | less --tabs=4 -RFX
+    show = diff-so-fancy | less --tabs=4 -RFX
+
+# so much color
+[color]
+    ui = always
+
+[color "diff"]
+    meta = yellow bold
+    commit = green bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+    whitespace = red reverse
+
+[color "diff-highlight"]
+    oldNormal = red bold
+    oldHighlight = "red bold 52"
+    newNormal = "green bold"
+    newHighlight = "green bold 22"
+
+[color "branch"]
+    current = cyan bold
+    local = yellow
+    remote = green
+
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+
+[alias]
+    fc = fetch
+    pl = pull
+    ps = push
+    cp = cherry-pick
+    
+    s = "status -sb"
+    co = checkout
+    cob = "checkout -b"
+
+    # branch
+    br = branch -vv
+    bra = "branch -avv"
+    brr = "branch -rvv"
+    brm = "branch --merged"
+    brd = "branch -d"
+    branchName = "!git rev-parse --abbrev-ref HEAD"
+
+    # add
+    au = "add -u"
+    ai = "add -i"
+
+    # commit (don't use -m  prefer use message template)
+    ci = commit
+    ca = "commit --amend"
+    cf = "commit --fixup"
+    cs = "commit --squash"
+
+    # add missing changes (need git add before)
+    oops = "commit --amend --no-edit"
+
+    # diff
+    df = "diff --color --color-words --abbrev"
+    dfs = "diff --color --color-words --abbrev --staged"
+
+    # reset 
+    r1 = "reset HEAD^"
+    rs1 = "reset --soft HEAD^"
+    rh1 = "reset --hard HEAD^"
+    unstage = "reset HEAD --"
+
+    # rebase
+    rebi = "rebase -i --autosquash"
+
+    # logs
+    lg = "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+    lginit = "!git rev-list --max-parents=0 HEAD | tail -1 | git show --summary $1"
+
+    lg1 = "!git lg -1"
+    lgu = "!git lg  @{u}..@"
+    lgr = "!git lg  @{u} ^@"
+    lgs = "!git lg -S"
+    lgg = "!git lg --grep"
+    lgd = "!git lg --diff-filter=D --name-only"
+
+    # stash
+    sl = "stash list"
+    sp = "stash pop"    # don't forget --index to restore index+worktree
+    sa = "stash apply"  # don't forget --index to restore index+worktree
+    sv = "stash save"	
+    svk = "stash save --keep-index"
+
+    # commit 
+    files = "show --name-only"
+    sum = "show --summary"
+    empty = "commit --allow-empty"
+
+    wip = "!git add . && git commit -m 'WIP (do not push that)'"
+    unwip = "!sh -c 'if [[ $(git lg -1) = *\"WIP (do not push that)\"* ]]; then git r1; else echo \"No WIP commit found. \"; fi'"
+
+    # index [no-]assume-unchanged
+    assume = "update-index --assume-unchanged"
+    unassume = "update-index --no-assume-unchanged"
+    assumed = "!git ls-files -v | grep ^h | cut -c 3-"
+
+    # stage status
+    added = "diff --cached --diff-filter=A --name-only"
+    deleted = "diff --cached --diff-filter=D --name-only"
+    staged = "diff --cached --name-status HEAD"
+    nostaged = "diff --name-status HEAD"
+
+    # tracked status
+    untrackedDir = "ls-files --others --exclude-standard --directory"
+    untracked = "ls-files --others --exclude-standard"
+
+    # branch life
+    branchGone = "!git fetch -p && git branch --no-color -vv | awk '/: gone]/{print $1}'"
+    deleteGone = "!git fetch -p && git branch --no-color -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
+
+    workDay = diff --shortstat '@{0 day ago}'
+    has = "branch --contains"
+
+#[include]
+#	path = ~/.gitconfig.YourClient

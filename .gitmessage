@@ -1,0 +1,6 @@
+<type>(<scope>): message
+
+# LEGENDE: 
+# - <type> availables: fix, update, feat, refacto, doc, test, chore, build
+# - <scope> is optional (ex: common, navigation, styles, cli,...)
+
