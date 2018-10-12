@@ -2,9 +2,8 @@
 [credential]
     helper = osxkeychain
 
-[user]
-    name = Your name
-    email = mail@example.dl
+[include]
+    path = ~/.gitconfig.client
 
 [core]
     excludesfile = ~/.gitignore
@@ -80,7 +79,7 @@
     
 [alias]
 
-     # list aliases
+    # list aliases
     alias = "!git config -l | grep alias | cut -c 7-"
 
     fc = fetch
@@ -189,5 +188,3 @@
 
     workDay = diff --shortstat '@{0 day ago}'
     has = "branch --contains"
-
-    
