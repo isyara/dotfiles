@@ -103,6 +103,8 @@
     # list branches sorted by last modified
     b = "branch -vv --sort=-authordate"
 
+    # list branches contains commit 
+    has = "branch --contains"
 
     # add
     au = "add -u"
@@ -119,6 +121,7 @@
     diff = diff--word-diff
     df = "diff --color --color-words --abbrev"
     dfs = "diff --color --color-words --abbrev --staged"
+    workDay = diff --shortstat '@{0 day ago}'
 
     # reset 
     r1 = "reset HEAD^"
@@ -182,9 +185,14 @@
     untracked = "ls-files --others --exclude-standard"
 
     # branch life
+
+    # add prefix done- of branch passed
     bdone = "!f() { git branch --no-color | grep "$1" | cut -c 3- | grep -v done | xargs -I{} git branch -m {} done-{}; }; f"
+
+    # delete done- branches
+    dbdone = "!f() { git branch --no-color | grep "done-" | xargs git branch d;  }; f"
+
+    # goen branches
     bgone = "!git fetch -p && git branch --no-color -vv | awk '/: gone]/{print $1}'"
     dbgone = "!git fetch -p && git branch --no-color -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
 
-    workDay = diff --shortstat '@{0 day ago}'
-    has = "branch --contains"
