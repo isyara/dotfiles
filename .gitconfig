@@ -11,13 +11,6 @@
     attributesfile = ~/.gitattributes
     filemode = false
 
-[status]
-    submoduleSummary = true
-
-[commit]
-    cleanup = strip
-    template = ~/.gitmessage
-    
 [fetch]
     prune = true
 
@@ -45,16 +38,25 @@
 
 [rerere]
     enabled = true
+    
+[include]
+    path = ~/.gitconfig.clientA
+
+[status]
+    submoduleSummary = true
+    untrackedCache = true
+
+[commit]
+    cleanup = strip
+    template = ~/.gitmessage
 
 [pager]
-    # see before https://github.com/so-fancy/diff-so-fancy
     diff = diff-so-fancy | less --tabs=4 -RFX
     show = diff-so-fancy | less --tabs=4 -RFX
 
 # so much color
 [color]
     ui = always
-
 [color "diff"]
     meta = yellow bold
     commit = green bold
@@ -62,30 +64,32 @@
     old = red bold
     new = green bold
     whitespace = red reverse
-
 [color "diff-highlight"]
     oldNormal = red bold
     oldHighlight = "red bold 52"
     newNormal = "green bold"
     newHighlight = "green bold 22"
-
 [color "branch"]
     current = cyan bold
     local = yellow
     remote = green
-
 [color "status"]
     added = yellow
     changed = green
     untracked = cyan
-
+    
 [alias]
+
+     # list aliases
+    alias = "!git config -l | grep alias | cut -c 7-"
+
     fc = fetch
     pl = pull
     ps = push
     cp = cherry-pick
     
     s = "status -sb"
+    st = "status"
     co = checkout
     cob = "checkout -b"
 
@@ -94,31 +98,37 @@
     bra = "branch -avv"
     brr = "branch -rvv"
     brm = "branch --merged"
-    brd = "branch -d"
     branchName = "!git rev-parse --abbrev-ref HEAD"
+    switch = !sh -c \"git branch -a --no-color | grep -v remotes | grep $1 | head -n 1 | xargs git checkout\"
+
+    # list branches sorted by last modified
+    b = "branch -vv --sort=-authordate"
+
 
     # add
     au = "add -u"
     ai = "add -i"
 
-    # commit (don't use -m  prefer use message template)
+    # commit
     ci = commit
     ca = "commit --amend"
     cf = "commit --fixup"
     cs = "commit --squash"
-
-    # add missing changes (need git add before)
     oops = "commit --amend --no-edit"
 
     # diff
+    diff = diff--word-diff
     df = "diff --color --color-words --abbrev"
     dfs = "diff --color --color-words --abbrev --staged"
 
     # reset 
     r1 = "reset HEAD^"
+    r2 = "reset HEAD^^"
     rs1 = "reset --soft HEAD^"
+    rs2 = "reset --soft HEAD^^"
     rh1 = "reset --hard HEAD^"
-    unstage = "reset HEAD --"
+    rh2 = "reset --hard HEAD^^"
+    unmerge = "reset --merge ORIG_HEAD"
 
     # rebase
     rebi = "rebase -i --autosquash"
@@ -126,6 +136,11 @@
     # logs
     lg = "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
     lginit = "!git rev-list --max-parents=0 HEAD | tail -1 | git show --summary $1"
+    ll ="!git lg --numstat"
+
+    # Show modified files in last commit:
+    dl = "!git ll -1"
+
 
     lg1 = "!git lg -1"
     lgu = "!git lg  @{u}..@"
@@ -133,31 +148,34 @@
     lgs = "!git lg -S"
     lgg = "!git lg --grep"
     lgd = "!git lg --diff-filter=D --name-only"
+    lc  = "!git lg ORIG_HEAD.. --stat --no-merges" 
 
     # stash
     sl = "stash list"
-    sp = "stash pop"    # don't forget --index to restore index+worktree
-    sa = "stash apply"  # don't forget --index to restore index+worktree
-    sv = "stash save"	
-    svk = "stash save --keep-index"
+    sp = "stash pop"
+    sa = "stash apply"
+    ss = "stash save"	
+    ssi = "stash save --keep-index"
 
     # commit 
     files = "show --name-only"
     sum = "show --summary"
-    empty = "commit --allow-empty"
-
-    wip = "!git add . && git commit -m 'WIP (do not push that)'"
+    wip = "commit -m 'WIP (do not push that)'"
     unwip = "!sh -c 'if [[ $(git lg -1) = *\"WIP (do not push that)\"* ]]; then git r1; else echo \"No WIP commit found. \"; fi'"
+    empty = "commit --allow-empty"
 
     # index [no-]assume-unchanged
     assume = "update-index --assume-unchanged"
-    unassume = "update-index --no-assume-unchanged"
+    assumeall = "!git status -s | awk {'print $2'} | xargs git assume"
     assumed = "!git ls-files -v | grep ^h | cut -c 3-"
+    unassume = "update-index --no-assume-unchanged"
+    unassumeall = "!git assumed | xargs git update-index --no-assume-unchanged"
 
     # stage status
     added = "diff --cached --diff-filter=A --name-only"
     deleted = "diff --cached --diff-filter=D --name-only"
     staged = "diff --cached --name-status HEAD"
+    unstage = "reset HEAD --"
     nostaged = "diff --name-status HEAD"
 
     # tracked status
@@ -165,11 +183,11 @@
     untracked = "ls-files --others --exclude-standard"
 
     # branch life
-    branchGone = "!git fetch -p && git branch --no-color -vv | awk '/: gone]/{print $1}'"
-    deleteGone = "!git fetch -p && git branch --no-color -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
+    bdone = "!f() { git branch --no-color | grep "$1" | cut -c 3- | grep -v done | xargs -I{} git branch -m {} done-{}; }; f"
+    bgone = "!git fetch -p && git branch --no-color -vv | awk '/: gone]/{print $1}'"
+    dbgone = "!git fetch -p && git branch --no-color -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
 
     workDay = diff --shortstat '@{0 day ago}'
     has = "branch --contains"
 
-#[include]
-#	path = ~/.gitconfig.YourClient
+    
