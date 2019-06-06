@@ -98,7 +98,8 @@
     brr = "branch -rvv"
     brm = "branch --merged"
     branchName = "!git rev-parse --abbrev-ref HEAD"
-    switch = !sh -c \"git branch -a --no-color | grep -v remotes | grep $1 | head -n 1 | xargs git checkout\"
+    switch = "!git checkout $(git branch -a --format='%(refname:short)' | fzf)"
+    cb = "!git switch"
 
     # list branches sorted by last modified
     b = "branch -vv --sort=-authordate"
