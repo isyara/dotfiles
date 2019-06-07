@@ -91,15 +91,19 @@
     st = "status"
     co = checkout
     cob = "checkout -b"
+    cb = "!git switch"
 
     # branch
     br = branch -vv
     bra = "branch -avv"
     brr = "branch -rvv"
     brm = "branch --merged"
-    branchName = "!git rev-parse --abbrev-ref HEAD"
     switch = "!git checkout $(git branch -a --format='%(refname:short)' | fzf)"
-    cb = "!git switch"
+    pam= !BRANCH=`git recent | fzf` && git checkout ${BRANCH}
+    
+    recent = !git for-each-ref --sort=-committerdate --format='%(refname:short)' refs/heads/ | head -n 100
+    current = rev-parse --abbrev-ref HEAD
+    sha = rev-parse HEAD
 
     # list branches sorted by last modified
     b = "branch -vv --sort=-authordate"
@@ -163,7 +167,7 @@
     # commit 
     files = "show --name-only"
     sum = "show --summary"
-    wip = "commit -m 'WIP (do not push that)'"
+    wip = "!git add --all . && git commit -m 'WIP (do not push that)'"
     unwip = "!sh -c 'if [[ $(git lg -1) = *\"WIP (do not push that)\"* ]]; then git r1; else echo \"No WIP commit found. \"; fi'"
     empty = "commit --allow-empty"
 
